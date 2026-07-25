@@ -8,9 +8,6 @@ Contents:
 - Cell type markers (ATAC) - based on Consensus Pituitary Atlas
 
 
-
-
-
 ### In addition see the main paper in Cell Reports:
 Kövér, B., Willis, T.L., Sherwin, O., Kaufman-Cook, J., Kemkem, Y., Segoviano, M.V., Lodge, E.J., Zamojski, M., Mendelev, N., Zhang, Z., et al. (2026). Consensus Pituitary Atlas, a scalable resource for annotation, novel marker discovery, and analyses in mouse pituitary gland research. Cell Rep. 45. https://doi.org/10.1016/j.celrep.2026.117407. 
 
@@ -30,8 +27,10 @@ This work was supported by the Wellcome Trust Advanced Therapies for Regenerativ
 ---
 
 **Developer and Lead Curator**: Bence Kövér  
-**Lab**: Andoniadou Lab, King's College London  / Queen Mary University of London
-**Contact**: bence.kover@kcl.ac.uk
 
-https://bsky.app/profile/bencekover.bsky.social
-https://www.linkedin.com/in/bence-kover/
+**Lab**: Andoniadou Lab, King's College London  / Queen Mary University of London
+
+**Contact**: bence.kover@kcl.ac.uk [Bluesky](https://bsky.app/profile/bencekover.bsky.social) [LinkedIn](https://www.linkedin.com/in/bence-kover/)
+
+
+
