@@ -1,5 +1,5 @@
 # Repository for the STAR Protocols paper discussing the epitome_tools cell type annotation tool 
-Repository including the tutorial for the epitome_tools paper in STAR protocols paper 
+Repository including the tutorial for the epitome_tools paper in STAR Protocols paper 
 ### Reproducible cell type annotation of single-cell and single-nucleus RNA and ATAC-seq datasets of the mouse pituitary gland (Kövér et al. 2026)
 
 Contents:
