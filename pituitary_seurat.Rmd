@@ -1,0 +1,170 @@
+---
+title: "AnnData to Seurat"
+author: "Bence Kover"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Load the required libraries
+
+```{r}
+library(anndataR)
+library(Seurat)
+library(ggplot2)
+options(warn = -1)
+```
+# RNA
+
+Load in the AnnData objects we have annotated in Python using epitome_tools
+
+```{r}
+adata <- read_h5ad("mouse_multiome_rna.h5ad")
+
+seurat_rna <- adata$as_Seurat(
+  assay_name = "RNA",
+  layers_mapping = c(counts = "raw_counts")
+)
+```
+
+Setting a cell type palette for plotting to match the plots we generated in Python.
+
+```{r}
+cell_type_palette <- c(
+  Corticotrophs      = "#1f77b4",
+  Endothelial_cells  = "#ff7f0e",
+  Erythrocytes       = "#2ca02c",
+  Gonadotrophs       = "#d62728",
+  Immune_cells       = "#9467bd",
+  Lactotrophs        = "#8c564b",
+  Melanotrophs       = "#e377c2",
+  Mesenchymal_cells  = "#7f7f7f",
+  Pituicytes         = "#bcbd22",
+  Somatotrophs       = "#17becf",
+  Stem_cells         = "#aec7e8",
+  Thyrotrophs        = "#ffbb78"
+)
+```
+
+We can now set the identity (cluster naming) of cells to cell_type_final from the epitome_tools output
+We then proceed to plot clusters and stem cell probability scores on a UMAP
+
+```{r}
+Idents(seurat_rna) <- seurat_rna@meta.data$cell_type_final
+
+#Plotting clusters
+p1 <- DimPlot(seurat_rna, cols=cell_type_palette )
+#Plotting stem cell probability
+p2 <- FeaturePlot(
+  seurat_rna,
+  features = "proba_Stem_cells"
+)
+
+# Save as PNG
+ggsave("DimPlot_clusters.png", plot = p1,
+       width = 6.5, height = 4, dpi = 800)
+
+ggsave("FeaturePlot_proba_Stem_cells.png", plot = p2,
+       width = 6.5, height = 4, dpi = 800)
+```
+
+#ATAC
+
+Loading in the ATAC data requires starting again from the fragment file
+For peaks we will use the Consensus Chromatin Landscape once more
+
+```{r}
+library(Signac)
+library(Seurat)
+library(EnsDb.Mmusculus.v79)
+library(GenomicRanges)
+library(GenomeInfoDb)
+library(Rsamtools)
+
+frag_path <- "/Users/bencekover/Downloads/fragments.tsv.gz"
+indexTabix(frag_path, format = "bed")
+#https://raw.githubusercontent.com/Andoniadou-Lab/consensus_pituitary_atlas/main/Consensus_Chromatin_Landscape/consensus_chromatin_landscape.bed
+peak_path <- "/Users/bencekover/Downloads/consensus_chromatin_landscape.bed"
+```
+
+
+```{r}
+# annotation (mm10, UCSC-style chr names)
+annotation <- GetGRangesFromEnsDb(ensdb = EnsDb.Mmusculus.v79)
+seqlevelsStyle(annotation) <- "UCSC"
+genome(annotation) <- "mm10"
+
+# read consensus peaks
+peaks <- read.table(peak_path, col.names = c("chr", "start", "end"))
+peaks <- makeGRangesFromDataFrame(peaks)
+
+# fragment object + quantify consensus peaks x cells
+frags  <- CreateFragmentObject(path = frag_path)
+counts <- FeatureMatrix(fragments = frags, features = peaks)
+```
+
+```{r}
+library(anndataR)
+library(Seurat)
+
+adata <- read_h5ad("mouse_multiome_atac_final.h5ad")
+
+python_atac <- adata$as_Seurat(
+  assay_name = "ATAC",
+)
+
+#keep only cells that occur in python_atac
+common_cells <- intersect(colnames(counts), colnames(python_atac))
+```
+We can now generate a new Signac object, and transfer over the metadata
+
+```{r}
+counts <- counts[, common_cells]
+
+# build Signac object
+signac_atac <- CreateSeuratObject(
+  counts = CreateChromatinAssay(
+    counts     = counts,
+    fragments  = frags,
+    annotation = annotation,
+    genome     = "mm10"
+  ),
+  assay = "ATAC"
+)
+
+#transferring over the metadata
+signac_atac@meta.data <- python_atac@meta.data
+
+#transferring over UMAP coords
+signac_atac@reductions$umap <- python_atac@reductions$X_umap
+
+
+```
+
+We can now set idents (cluster names) and generate plots.
+```{r}
+Idents(signac_atac) <- signac_atac@meta.data$cell_type_final
+
+#Plotting clusters
+p1 <- DimPlot(signac_atac, cols=cell_type_palette )
+#Plotting stem cell probability
+p2 <- FeaturePlot(
+  signac_atac,
+  features = "proba_Stem_cells"
+)
+
+# Save as PNG
+ggsave("DimPlot_clusters_atac.png", plot = p1,
+       width = 6.5, height = 4, dpi = 800)
+
+ggsave("FeaturePlot_proba_Stem_cells_atac.png", plot = p2,
+       width = 6.5, height = 4, dpi = 800)
+
+
+```
+
+
+
