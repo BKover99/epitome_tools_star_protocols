@@ -63,6 +63,8 @@ p2 <- FeaturePlot(
   features = "proba_Stem_cells"
 )
 
+p1 + p2
+
 # Save as PNG
 ggsave("DimPlot_clusters.png", plot = p1,
        width = 6.5, height = 4, dpi = 800)
@@ -155,6 +157,8 @@ p2 <- FeaturePlot(
   signac_atac,
   features = "proba_Stem_cells"
 )
+
+p1 + p2
 
 # Save as PNG
 ggsave("DimPlot_clusters_atac.png", plot = p1,
