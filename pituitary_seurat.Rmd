@@ -22,7 +22,7 @@ options(warn = -1)
 Load in the AnnData objects we have annotated in Python using epitome_tools
 
 ```{r}
-adata <- read_h5ad("mouse_multiome_rna.h5ad")
+adata <- read_h5ad("/Users/bencekover/phd_local/star_protocols/mouse_multiome_rna.h5ad")
 
 seurat_rna <- adata$as_Seurat(
   assay_name = "RNA",
@@ -112,7 +112,7 @@ counts <- FeatureMatrix(fragments = frags, features = peaks)
 library(anndataR)
 library(Seurat)
 
-adata <- read_h5ad("mouse_multiome_atac_final.h5ad")
+adata <- read_h5ad("/Users/bencekover/phd_local/star_protocols/mouse_multiome_atac_final.h5ad")
 
 python_atac <- adata$as_Seurat(
   assay_name = "ATAC",
