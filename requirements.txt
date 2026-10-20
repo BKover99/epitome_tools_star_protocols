@@ -7,4 +7,3 @@ polars==1.43.2
 anndata==0.13.2
 snapatac2==2.10.0
 scikit-learn==1.6.1
-numpy<2.1
