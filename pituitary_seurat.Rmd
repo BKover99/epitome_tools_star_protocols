@@ -73,7 +73,7 @@ ggsave("FeaturePlot_proba_Stem_cells.png", plot = p2,
        width = 6.5, height = 4, dpi = 800)
 ```
 
-#ATAC
+# ATAC
 
 Loading in the ATAC data requires starting again from the fragment file
 For peaks we will use the Consensus Chromatin Landscape once more
